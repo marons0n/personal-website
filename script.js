@@ -39,12 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // When drone video ends
         droneVideo.addEventListener('ended', function() {
-            // Fade out drone video
-            droneVideo.style.opacity = '0';
-            // Fade in original video
-            video.style.opacity = '1';
-            // Show buttons again
-            buttons.forEach(button => button.style.display = 'block');
+            // Redirect to aronson-aerial page
+            window.location.href = 'aronson-aerial/index.html';
         }, { once: true });
     });
 
