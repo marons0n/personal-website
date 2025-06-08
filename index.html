@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>MATT ARONSON</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <img id="logo" src="logo.png" alt="Logo">
+   <div id="screen1" class="screen">
+       <div class="centered">
+           <p id="text1">MATT ARONSON</p>
+           <p id="text2">welcome to my portfolio</p>
+           <button id="nextButton">explore</button>
+       </div>
+   </div>
+   <div id="screen2" class="screen hidden">
+       <video id="backgroundVideo" autoplay muted playsinline>
+           <source src="reference.mp4" type="video/mp4">
+           Your browser does not support the video tag.
+       </video>
+       <video id="droneVideo" autoplay muted playsinline style="opacity: 0;">
+           <source src="drone.mp4" type="video/mp4">
+           Your browser does not support the video tag.
+       </video>
+       <button id="githubButton" class="video-button">Button 1 - github</button>
+       <button id="droneButton" class="video-button">Button 2 - drone</button>
+       <button id="linkedinButton" class="video-button">Button 3 - linkedin</button>
+       <button id="booksButton" class="video-button">Button 4 - books</button>
+       <button id="laptopButton" class="video-button">Button 5 - laptop</button>
+       <button id="lehighButton" class="video-button">Button 6 - lehigh</button>
+   </div>
+   <div id="screen3" class="screen hidden">
+       <video id="backgroundVideo2" autoplay muted playsinline>
+           <source src="another_reference.mp4" type="video/mp4">
+           Your browser does not support the video tag.
+       </video>
+   </div>
+   <script src="script.js"></script>
+</body>
+</html>
