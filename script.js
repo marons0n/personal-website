@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     githubButton.addEventListener('click', function() {
-        window.location.href = 'https://github.com/marons0n';
+        window.location.href = 'https://github.com/mattaronson', '_blank', 'noopener';
     });
 
     droneButton.addEventListener('click', function() {
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     linkedinButton.addEventListener('click', function() {
-        window.location.href = 'linkedin.html';
+        window.location.href = 'https://www.linkedin.com/in/maronson1/', '_blank', 'noopener';
     });
 
     booksButton.addEventListener('click', function() {
