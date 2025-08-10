@@ -2,12 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Contact</title>
+    <title>Contact - Aronson Aerial</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-    <div><strong>Aronson Aerial</strong></div>
+
+<!-- Navigation -->
+<header class="navbar">
+    <div class="logo-container">
+        <img src="images/clearlogo_edited.png" alt="Logo" class="logo">
+        <span class="brand-name">Aronson Aerial</span>
+    </div>
     <nav>
         <a href="index.html">Home</a>
         <div class="dropdown">
@@ -24,21 +29,33 @@
         <a href="contact.html">Contact</a>
     </nav>
 </header>
+
 <main>
-
-<section style="padding: 40px; max-width: 800px; margin: auto;">
-    <h2>Get in Touch</h2>
-    <p>Email us at: aronsonaerial@gmail.com<br> - or -<br>Fill out the form below</p>
-    <form>
-        <input type="text" placeholder="Name" style="width: 100%; padding: 10px; margin: 10px 0;"><br>
-        <input type="email" placeholder="Email" style="width: 100%; padding: 10px; margin: 10px 0;"><br>
-        <input type="text" placeholder="Subject" style="width: 100%; padding: 10px; margin: 10px 0;"><br>
-        <textarea placeholder="Type your message here..." style="width: 100%; height: 150px; padding: 10px; margin: 10px 0;"></textarea><br>
-        <button type="submit" style="padding: 10px 20px;">Submit</button>
-    </form>
-</section>
-
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="contact-container">
+            <h2>Get in Touch</h2>
+            <p class="contact-intro">Email us at: <strong>aronsonaerial@gmail.com</strong><br><span class="divider">- or -</span><br>Fill out the form below</p>
+            
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" placeholder="Name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Subject" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Type your message here..." class="form-textarea" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+        </div>
+    </section>
 </main>
+
 <footer>
     <p>&copy; 2025 Aronson Aerial. All images belong to Aronson Aerial and may not be copied.</p>
 </footer>

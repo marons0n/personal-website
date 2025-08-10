@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // When drone video ends
         droneVideo.addEventListener('ended', function() {
             // Redirect to aronson-aerial page
-            window.location.href = 'aronson-aerial/index.html';
+            window.location.href = 'aronson-aerial/index.html', '_blank';
         }, { once: true });
     });
 

@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background: #fff;
     color: #333;
 }
@@ -71,35 +73,413 @@ main {
 
 /* Hero Section */
 .hero {
+    position: relative;
+    height: 60vh;
+    min-height: 500px;
+    background-image: url('images/cover.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 60px 5%;
+    padding: 0 5%;
+}
+
+.hero-content {
+    max-width: 600px;
+    color: #333;
+}
+
+.hero-content h1 {
+    font-size: 3.5em;
+    margin-bottom: 0.3em;
+    line-height: 1.1;
+    font-weight: normal;
+}
+
+.hero-content h1 strong {
+    font-weight: bold;
+}
+
+.hero-content p {
+    font-size: 1.4em;
+    margin: 0;
+    font-weight: normal;
+}
+
+/* Why Use Section */
+.why-use-section {
+    padding: 80px 5%;
+    text-align: center;
     background: #fff;
 }
 
-.hero-text {
-    flex: 1;
+.why-use-section h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    font-weight: 600;
+    color: #333;
 }
 
-.hero-text h1 {
+.why-use-section p {
+    max-width: 800px;
+    margin: 0 auto 2em;
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+}
+
+.contact-btn {
+    display: inline-block;
+    background: #333;
+    color: white;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    font-size: 1em;
+    transition: background 0.3s ease;
+}
+
+.contact-btn:hover {
+    background: #555;
+}
+
+/* Giving Back Section */
+.giving-back-section {
+    background: #e8e8e8;
+    padding: 80px 5%;
+}
+
+.giving-back-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.percentage-display {
+    flex: 1;
+    text-align: center;
+}
+
+.large-percentage {
+    font-size: 8em;
+    font-weight: 700;
+    color: #333;
+    line-height: 1;
+}
+
+.giving-back-text {
+    flex: 2;
+}
+
+.giving-back-text h2 {
     font-size: 2.5em;
     margin-bottom: 0.5em;
+    font-weight: 600;
+    color: #333;
 }
 
-.hero-text p {
-    font-size: 1.2em;
+.giving-back-text p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+    margin: 0;
 }
 
-.hero-image {
+/* Partnership Section */
+.partnership-section {
+    padding: 80px 5%;
+    text-align: center;
+    background: #fff;
+}
+
+.partnership-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.logo-container-partnership {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.partnership-logo {
+    height: 180px;
+    max-width: 300px;
+    object-fit: contain;
+}
+
+.partnership-x {
+    font-size: 2.5em;
+    font-weight: 300;
+    color: #333;
+}
+
+.partnership-text {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+}
+
+.partnership-images {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.partnership-photo {
+    width: 400px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* About Page Styles */
+.about-intro-section {
+    padding: 80px 5%;
+    background: #fff;
+}
+
+.about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.profile-image-container {
     flex: 1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
-.hero-image img {
-    max-width: 90%;
-    height: auto;
+.profile-image {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.about-content {
+    flex: 1.5;
+}
+
+.about-content h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    font-weight: 600;
+    color: #333;
+}
+
+.about-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 1.2em;
+}
+
+/* Drones Section */
+.drones-section {
+    padding: 80px 5%;
+    background: #f8f8f8;
+}
+
+.drones-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.drones-content {
+    flex: 1.5;
+}
+
+.drones-content h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    font-weight: 600;
+    color: #333;
+}
+
+.drones-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+}
+
+.drones-image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.drones-image {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Editing Section */
+.editing-section {
+    padding: 80px 5%;
+    background: #fff;
+}
+
+.editing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.editing-software {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.software-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.software-logo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.editing-content {
+    flex: 1.5;
+}
+
+.editing-content h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    font-weight: 600;
+    color: #333;
+}
+
+.editing-content p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Contact Section */
+.contact-section {
+    padding: 80px 5%;
+    background: #fff;
+    min-height: 60vh;
+}
+
+.contact-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-container h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    font-weight: 600;
+    color: #333;
+}
+
+.contact-intro {
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 2.5em;
+}
+
+.contact-intro strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.divider {
+    display: inline-block;
+    margin: 0.5em 0;
+    color: #777;
+}
+
+.contact-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #333;
+}
+
+.form-textarea {
+    width: 100%;
+    height: 150px;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #333;
+}
+
+.submit-btn {
+    background: #333;
+    color: white;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 500;
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    display: block;
+    margin: 30px auto 0;
+}
+
+.submit-btn:hover {
+    background: #555;
 }
 
 /* Footer */
@@ -111,4 +491,104 @@ footer {
     position: relative;
     bottom: 0;
     width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5em;
+    }
+    
+    .hero-content p {
+        font-size: 1.2em;
+    }
+    
+    .why-use-section h2,
+    .giving-back-text h2,
+    .contact-container h2,
+    .about-content h2,
+    .drones-content h2,
+    .editing-content h2 {
+        font-size: 2em;
+    }
+    
+    .giving-back-content {
+        flex-direction: column;
+        gap: 40px;
+        text-align: center;
+    }
+    
+    .large-percentage {
+        font-size: 6em;
+    }
+    
+    .partnership-logos {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .partnership-x {
+        transform: rotate(90deg);
+    }
+    
+    .partnership-images {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .partnership-photo {
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .contact-section {
+        padding: 60px 5%;
+    }
+    
+    .contact-intro {
+        font-size: 1.1em;
+    }
+    
+    .form-input,
+    .form-textarea {
+        padding: 12px;
+    }
+    
+    .submit-btn {
+        padding: 12px 30px;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* About Page Mobile Styles */
+    .about-container,
+    .drones-container,
+    .editing-container {
+        flex-direction: column;
+        gap: 40px;
+        text-align: center;
+    }
+    
+    .profile-image,
+    .drones-image {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .software-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        justify-items: center;
+    }
+    
+    .software-logo {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .about-intro-section,
+    .drones-section,
+    .editing-section {
+        padding: 60px 5%;
+    }
 }
