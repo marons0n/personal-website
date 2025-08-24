@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     githubButton.addEventListener('click', function() {
-        window.location.href = 'https://github.com/mattaronson', '_blank', 'noopener';
+        window.location.href = 'https://github.com/marons0n', '_blank', 'noopener';
     });
 
     droneButton.addEventListener('click', function() {
