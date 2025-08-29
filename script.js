@@ -8,12 +8,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const video = document.getElementById('backgroundVideo');
     const droneVideo = document.getElementById('droneVideo');
     const gitbounceVideo = document.getElementById('gitbounceVideo');
+    
+    // Add error handling for videos to prevent black screen
+    video.addEventListener('error', function() {
+        console.error('Background video error:', video.error);
+        // Fallback: show a solid color background
+        video.style.display = 'none';
+        document.getElementById('screen2').style.backgroundColor = '#000';
+    });
+    
+    gitbounceVideo.addEventListener('error', function() {
+        console.error('Gitbounce video error:', gitbounceVideo.error);
+        // Fallback: return to background video immediately
+        gitbounceVideo.style.opacity = '0';
+        video.style.opacity = '1';
+    });
+    
+    // Ensure gitbounce video is loaded and ready
+    gitbounceVideo.addEventListener('loadeddata', function() {
+        console.log('Gitbounce video loaded successfully');
+    });
+    
+    // Add a safety timeout to prevent infinite black screen
+    let hoverTimeout;
+    let isHovering = false;
 
     document.getElementById('nextButton').addEventListener('click', function() {
         document.getElementById('screen1').classList.add('hidden');
         document.getElementById('screen2').classList.remove('hidden');
         setTimeout(() => {
             video.play();
+            // Preload gitbounce video to prevent delays
+            gitbounceVideo.load();
             showVideoButtons();
         }, 50);
     });
@@ -24,35 +50,78 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // GitHub button hover functionality
     githubButton.addEventListener('mouseenter', function() {
+        isHovering = true;
+        
         // Store current video time to return to later
         if (!video.paused) {
             video.dataset.originalTime = video.currentTime;
         }
         
-        // Fade out background video
+        // Ensure background video is visible and playing
+        if (video.paused) {
+            video.play();
+        }
+        
+        // Fade out background video smoothly
+        video.style.transition = 'opacity 0.3s ease';
         video.style.opacity = '0';
         
         // Show and play gitbounce video with loop
+        gitbounceVideo.style.transition = 'opacity 0.3s ease';
         gitbounceVideo.style.opacity = '1';
         gitbounceVideo.loop = true;
         gitbounceVideo.currentTime = 0;
-        gitbounceVideo.play();
+        
+        // Ensure gitbounce video is ready before playing
+        if (gitbounceVideo.readyState >= 2) {
+            gitbounceVideo.play();
+        } else {
+            gitbounceVideo.addEventListener('canplay', function() {
+                if (isHovering) {
+                    gitbounceVideo.play();
+                }
+            }, { once: true });
+        }
+        
+        // Safety timeout to prevent black screen
+        clearTimeout(hoverTimeout);
+        hoverTimeout = setTimeout(() => {
+            if (isHovering && gitbounceVideo.style.opacity === '1') {
+                // If still hovering and gitbounce video is visible, ensure it's playing
+                if (gitbounceVideo.paused) {
+                    gitbounceVideo.play();
+                }
+            }
+        }, 1000);
     });
 
     githubButton.addEventListener('mouseleave', function() {
-        // Stop and hide gitbounce video
+        isHovering = false;
+        clearTimeout(hoverTimeout);
+        
+        // Stop and hide gitbounce video smoothly
         gitbounceVideo.pause();
+        gitbounceVideo.style.transition = 'opacity 0.3s ease';
         gitbounceVideo.style.opacity = '0';
         gitbounceVideo.loop = false;
         
-        // Return to background video
+        // Return to background video smoothly
+        video.style.transition = 'opacity 0.3s ease';
         video.style.opacity = '1';
+        
+        // Ensure background video is playing
+        if (video.paused) {
+            video.play();
+        }
         
         // If we have a stored time, seek to it, otherwise go to end
         if (video.dataset.originalTime) {
-            video.currentTime = parseFloat(video.dataset.originalTime);
-        } else {
-            video.currentTime = video.duration - 0.1; // Go to near end
+            const seekTime = parseFloat(video.dataset.originalTime);
+            if (seekTime >= 0 && seekTime < video.duration) {
+                video.currentTime = seekTime;
+            }
+        } else if (video.duration && !isNaN(video.duration) && video.duration > 0) {
+            video.currentTime = Math.max(0, video.duration - 0.1); // Go to near end, but not beyond
         }
     });
 
