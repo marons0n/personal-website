@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const lehighButton = document.getElementById('lehighButton');
     const video = document.getElementById('backgroundVideo');
     const droneVideo = document.getElementById('droneVideo');
+    const gitbounceVideo = document.getElementById('gitbounceVideo');
 
     document.getElementById('nextButton').addEventListener('click', function() {
         document.getElementById('screen1').classList.add('hidden');
@@ -19,6 +20,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     video.addEventListener('ended', function() {
         this.pause();
+    });
+
+    // GitHub button hover functionality
+    githubButton.addEventListener('mouseenter', function() {
+        // Store current video time to return to later
+        if (!video.paused) {
+            video.dataset.originalTime = video.currentTime;
+        }
+        
+        // Fade out background video
+        video.style.opacity = '0';
+        
+        // Show and play gitbounce video with loop
+        gitbounceVideo.style.opacity = '1';
+        gitbounceVideo.loop = true;
+        gitbounceVideo.currentTime = 0;
+        gitbounceVideo.play();
+    });
+
+    githubButton.addEventListener('mouseleave', function() {
+        // Stop and hide gitbounce video
+        gitbounceVideo.pause();
+        gitbounceVideo.style.opacity = '0';
+        gitbounceVideo.loop = false;
+        
+        // Return to background video
+        video.style.opacity = '1';
+        
+        // If we have a stored time, seek to it, otherwise go to end
+        if (video.dataset.originalTime) {
+            video.currentTime = parseFloat(video.dataset.originalTime);
+        } else {
+            video.currentTime = video.duration - 0.1; // Go to near end
+        }
     });
 
     githubButton.addEventListener('click', function() {
