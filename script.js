@@ -24,11 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // GitHub button hover functionality
     githubButton.addEventListener('mouseenter', function() {
-        // Store current video time to return to later
-        if (!video.paused) {
-            video.dataset.originalTime = video.currentTime;
-        }
-        
         // Keep background video playing but show gitbounce video on top
         gitbounceVideo.style.opacity = '1';
         gitbounceVideo.loop = true;
@@ -41,13 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
         gitbounceVideo.pause();
         gitbounceVideo.style.opacity = '0';
         gitbounceVideo.loop = false;
-        
-        // If we have a stored time, seek to it, otherwise go to end
-        if (video.dataset.originalTime) {
-            video.currentTime = parseFloat(video.dataset.originalTime);
-        } else {
-            video.currentTime = video.duration - 0.1; // Go to near end
-        }
     });
 
     githubButton.addEventListener('click', function() {
