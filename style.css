@@ -78,7 +78,7 @@ body, html {
     border: .1em solid white;
 }
 
-#backgroundVideo, #backgroundVideo2, #droneVideo, #gitbounceVideo {
+#backgroundVideo, #backgroundVideo2, #droneVideo {
     position: absolute;
     top: 0;
     left: 0;
