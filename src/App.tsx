@@ -5,6 +5,16 @@ function App() {
   const [screen1Visible, setScreen1Visible] = useState(true);
   const [buttonsVisible, setButtonsVisible] = useState(false);
   const [lehighHovering, setLehighHovering] = useState(false);
+  /* 
+     Initialize isMobile based on window width immediately to avoid 
+     showing loading screen on mobile devices.
+  */
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 700);
+
+  // Loading State
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [videoSources, setVideoSources] = useState<Record<string, string>>({});
 
   // Video Refs
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
@@ -24,6 +34,14 @@ function App() {
 
   // Constants
   const LEHIGH_PAUSE_TIME = 39 / 24; // ~1.625s
+
+  const VIDEO_PATHS = {
+    main: "videos/main0000-0120.mp4",
+    drone: "drone.mp4",
+    git: "videos/git_hover0120-0140.mp4",
+    linkedin: "videos/linkedin_hover0120-0130.mp4",
+    lehigh: "videos/lehigh_hover0120-0190.mp4"
+  };
 
   const positionButtons = () => {
     const video = backgroundVideoRef.current;
@@ -95,8 +113,65 @@ function App() {
     }
 
     window.addEventListener('resize', positionButtons);
-    return () => window.removeEventListener('resize', positionButtons);
+
+    // Mobile Check
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 700);
+    };
+    // checkMobile(); // Already initialized
+    window.addEventListener('resize', checkMobile);
+
+    return () => {
+      window.removeEventListener('resize', positionButtons);
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
+
+  // Video Preloading
+  useEffect(() => {
+    // Do not load videos if on mobile
+    if (window.innerWidth < 700) {
+      setIsLoading(false);
+      return;
+    }
+
+    const loadVideos = async () => {
+      try {
+        const videoKeys = Object.keys(VIDEO_PATHS);
+        const loadedSources: Record<string, string> = {};
+        let loadedCount = 0;
+
+        await Promise.all(videoKeys.map(async (key) => {
+          const url = VIDEO_PATHS[key as keyof typeof VIDEO_PATHS];
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+          loadedSources[key] = objectUrl;
+
+          loadedCount++;
+          setLoadingProgress(Math.round((loadedCount / videoKeys.length) * 100));
+        }));
+
+        setVideoSources(loadedSources);
+        // Add a small delay to ensure users see 100% briefly or smooth transition
+        setTimeout(() => setIsLoading(false), 500);
+      } catch (error) {
+        console.error("Failed to load videos", error);
+        // Fallback: If loading fails, try to proceed without blobs (browser might handle it via normal caching/streaming)
+        setIsLoading(false);
+      }
+    };
+
+    loadVideos();
+  }, []);
+
+  // Recalculate positions when switching back to desktop
+  useEffect(() => {
+    if (!isMobile && buttonsVisible) {
+      // Small timeout to ensure DOM is rendered with display: block
+      setTimeout(positionButtons, 100);
+    }
+  }, [isMobile, buttonsVisible]);
 
   useEffect(() => {
     if (buttonsVisible) { // Ensure buttons position correctly when they become visible
@@ -216,134 +291,154 @@ function App() {
     }
   }
 
+  if (isMobile) {
+    return (
+      <div className="mobile-warning">
+        <h1>DESKTOP EXPERIENCE ONLY</h1>
+        <p>Please visit on a computer.</p>
+        <p>Trust me its worth it.</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <h1>LOADING EXPERIENCE... {loadingProgress}%</h1>
+      </div>
+    );
+  }
+
   return (
     <>
-      <img id="logo" src="logo.png" alt="Logo" />
+      <div style={{ display: isMobile ? 'none' : 'block' }}>
+        <img id="logo" src="logo.png" alt="Logo" />
 
-      {/* Screen 1 */}
-      <div id="screen1" className={`screen ${!screen1Visible ? 'hidden' : ''}`}>
-        <div className="centered">
-          <p id="text1">MATT ARONSON</p>
-          <p id="text2">welcome to my portfolio</p>
-          <button id="nextButton" onClick={handleNextClick}>explore</button>
+        {/* Screen 1 */}
+        <div id="screen1" className={`screen ${!screen1Visible ? 'hidden' : ''}`}>
+          <div className="centered">
+            <p id="text1">MATT ARONSON</p>
+            <p id="text2">welcome to my portfolio</p>
+            <button id="nextButton" onClick={handleNextClick}>explore</button>
+          </div>
         </div>
-      </div>
 
-      {/* Screen 2 */}
-      <div id="screen2" className={`screen ${screen1Visible ? 'hidden' : ''}`}>
-        <video
-          id="backgroundVideo"
-          muted
-          playsInline
-          ref={backgroundVideoRef}
-          onEnded={handleVideoEnded}
-          onLoadedMetadata={positionButtons}
-        >
-          <source src="videos/main0000-0120.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {/* Screen 2 */}
+        <div id="screen2" className={`screen ${screen1Visible ? 'hidden' : ''}`}>
+          <video
+            id="backgroundVideo"
+            muted
+            playsInline
+            ref={backgroundVideoRef}
+            onEnded={handleVideoEnded}
+            onLoadedMetadata={positionButtons}
+          >
+            <source src={videoSources.main || VIDEO_PATHS.main} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
-        <video id="droneVideo" autoPlay muted playsInline style={{ opacity: 0 }} ref={droneVideoRef}>
-          <source src="drone.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+          <video id="droneVideo" autoPlay muted playsInline style={{ opacity: 0 }} ref={droneVideoRef}>
+            <source src={videoSources.drone || VIDEO_PATHS.drone} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
-        <video id="gitVideoHover" loop muted playsInline style={{ opacity: 0 }} ref={gitVideoHoverRef}>
-          <source src="videos/git_hover0120-0140.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+          <video id="gitVideoHover" loop muted playsInline style={{ opacity: 0 }} ref={gitVideoHoverRef}>
+            <source src={videoSources.git || VIDEO_PATHS.git} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
-        <video id="linkedinVideoHover" muted playsInline style={{ opacity: 0 }} ref={linkedinVideoHoverRef}>
-          <source src="videos/linkedin_hover0120-0130.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+          <video id="linkedinVideoHover" muted playsInline style={{ opacity: 0 }} ref={linkedinVideoHoverRef}>
+            <source src={videoSources.linkedin || VIDEO_PATHS.linkedin} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
-        <video
-          id="lehighVideoHover"
-          muted
-          playsInline
-          style={{ opacity: 0 }}
-          ref={lehighVideoHoverRef}
-          onTimeUpdate={handleLehighTimeUpdate}
-          onEnded={handleLehighEnded}
-        >
-          <source src="videos/lehigh_hover0120-0190.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+          <video
+            id="lehighVideoHover"
+            muted
+            playsInline
+            style={{ opacity: 0 }}
+            ref={lehighVideoHoverRef}
+            onTimeUpdate={handleLehighTimeUpdate}
+            onEnded={handleLehighEnded}
+          >
+            <source src={videoSources.lehigh || VIDEO_PATHS.lehigh} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
-        <button
-          id="githubButton"
-          className="video-button"
-          ref={githubButtonRef}
-          style={{ display: buttonsVisible ? 'block' : 'none' }}
-          onMouseEnter={handleGithubEnter}
-          onMouseLeave={handleGithubLeave}
-          onClick={handleGithubClick}
-        >
-          Button 1 - github
-        </button>
+          <button
+            id="githubButton"
+            className="video-button"
+            ref={githubButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onMouseEnter={handleGithubEnter}
+            onMouseLeave={handleGithubLeave}
+            onClick={handleGithubClick}
+          >
+            Button 1 - github
+          </button>
 
-        <button
-          id="droneButton"
-          className="video-button"
-          ref={droneButtonRef}
-          style={{ display: buttonsVisible ? 'block' : 'none' }}
-          onClick={handleDroneClick}
-        >
-          Button 2 - drone
-        </button>
+          <button
+            id="droneButton"
+            className="video-button"
+            ref={droneButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onClick={handleDroneClick}
+          >
+            Button 2 - drone
+          </button>
 
-        <button
-          id="linkedinButton"
-          className="video-button"
-          ref={linkedinButtonRef}
-          style={{ display: buttonsVisible ? 'block' : 'none' }}
-          onMouseEnter={handleLinkedinEnter}
-          onMouseLeave={handleLinkedinLeave}
-          onClick={handleLinkedinClick}
-        >
-          Button 3 - linkedin
-        </button>
+          <button
+            id="linkedinButton"
+            className="video-button"
+            ref={linkedinButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onMouseEnter={handleLinkedinEnter}
+            onMouseLeave={handleLinkedinLeave}
+            onClick={handleLinkedinClick}
+          >
+            Button 3 - linkedin
+          </button>
 
-        <button
-          id="booksButton"
-          className="video-button"
-          ref={booksButtonRef}
-          style={{ display: buttonsVisible ? 'block' : 'none' }}
-        // onClick={() => window.location.href = 'books.html'}
-        >
-          Button 4 - books
-        </button>
+          <button
+            id="booksButton"
+            className="video-button"
+            ref={booksButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+          // onClick={() => window.location.href = 'books.html'}
+          >
+            Button 4 - books
+          </button>
 
-        <button
-          id="laptopButton"
-          className="video-button"
-          ref={laptopButtonRef}
-          style={{ display: buttonsVisible ? 'block' : 'none' }}
-        // onClick={() => window.location.href = 'laptop.html'}
-        >
-          Button 5 - laptop
-        </button>
+          <button
+            id="laptopButton"
+            className="video-button"
+            ref={laptopButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+          // onClick={() => window.location.href = 'laptop.html'}
+          >
+            Button 5 - laptop
+          </button>
 
-        <button
-          id="lehighButton"
-          className="video-button"
-          ref={lehighButtonRef}
-          style={{ display: buttonsVisible ? 'block' : 'none' }}
-          onMouseEnter={handleLehighEnter}
-          onMouseLeave={handleLehighLeave}
-        // onClick={() => window.location.href = 'lehigh.html'}
-        >
-          Button 6 - lehigh
-        </button>
-      </div>
+          <button
+            id="lehighButton"
+            className="video-button"
+            ref={lehighButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onMouseEnter={handleLehighEnter}
+            onMouseLeave={handleLehighLeave}
+          // onClick={() => window.location.href = 'lehigh.html'}
+          >
+            Button 6 - lehigh
+          </button>
+        </div>
 
-      {/* Screen 3 */}
-      <div id="screen3" className="screen hidden">
-        <video id="backgroundVideo2" muted playsInline ref={backgroundVideo2Ref}>
-          <source src="videos/main0000-0120.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {/* Screen 3 */}
+        <div id="screen3" className="screen hidden">
+          <video id="backgroundVideo2" muted playsInline ref={backgroundVideo2Ref}>
+            <source src={videoSources.main || VIDEO_PATHS.main} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
       </div>
     </>
   )
