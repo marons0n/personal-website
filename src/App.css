@@ -18,3 +18,29 @@
 .redirect-overlay.visible {
   opacity: 1;
 }
+
+.back-arrow {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  z-index: 30;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.back-arrow.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.back-arrow svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}

@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import LehighCourses from './components/LehighCourses';
 
 function App() {
   const [screen1Visible, setScreen1Visible] = useState(true);
   const [buttonsVisible, setButtonsVisible] = useState(false);
-  const [lehighHovering, setLehighHovering] = useState(false);
+
   /* 
      Initialize isMobile based on window width immediately to avoid 
      showing loading screen on mobile devices.
@@ -16,6 +17,7 @@ function App() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [videoSources, setVideoSources] = useState<Record<string, string>>({});
   const [linkedinRedirecting, setLinkedinRedirecting] = useState(false);
+  const [lehighBackArrowVisible, setLehighBackArrowVisible] = useState(false);
 
   // Video Refs
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
@@ -23,9 +25,12 @@ function App() {
   const gitVideoHoverRef = useRef<HTMLVideoElement>(null);
   const linkedinVideoHoverRef = useRef<HTMLVideoElement>(null);
   const linkedinClickVideoRef = useRef<HTMLVideoElement>(null);
-  const lehighVideoHoverRef = useRef<HTMLVideoElement>(null);
+  const lehighClickVideoRef = useRef<HTMLVideoElement>(null);
+  const lehighImageRef = useRef<HTMLImageElement>(null);
   const backgroundVideo2Ref = useRef<HTMLVideoElement>(null);
   const githubLeaveTimeoutRef = useRef<number | null>(null);
+  // Ref for Lehigh Courses container
+  const lehighCoursesRef = useRef<HTMLDivElement>(null);
 
   // Button Refs
   const githubButtonRef = useRef<HTMLButtonElement>(null);
@@ -38,7 +43,7 @@ function App() {
   const blenderButtonRef = useRef<HTMLButtonElement>(null);
 
   // Constants
-  const LEHIGH_PAUSE_TIME = 39 / 24; // ~1.625s
+
 
   const VIDEO_PATHS = {
     main: "videos/main.mp4",
@@ -46,7 +51,7 @@ function App() {
     git: "videos/git-hover.mp4",
     linkedin: "videos/linkedin-hover.mp4",
     linkedinClick: "videos/linkedin-click.mp4",
-    lehigh: "videos/lehigh-hover-old.mp4"
+    lehighClick: "videos/lehigh-click.mp4"
   };
 
   const positionButtons = () => {
@@ -102,6 +107,20 @@ function App() {
         button.style.height = `${buttonScreenHeight}px`;
       }
     });
+
+    // Position Lehigh Courses Container
+    if (lehighCoursesRef.current) {
+      const containerStyle = lehighCoursesRef.current.style;
+      const w = videoWidth * scale; // Full video width
+      const h = videoHeight * scale; // Full video height
+      const x = offsetX; // Centered offset
+      const y = offsetY;
+
+      containerStyle.left = `${x}px`;
+      containerStyle.top = `${y}px`;
+      containerStyle.width = `${w}px`;
+      containerStyle.height = `${h}px`;
+    }
   };
 
   useEffect(() => {
@@ -184,10 +203,10 @@ function App() {
   }, [isMobile, buttonsVisible]);
 
   useEffect(() => {
-    if (buttonsVisible) { // Ensure buttons position correctly when they become visible
+    if (buttonsVisible || lehighBackArrowVisible) { // Ensure buttons position correctly when they become visible
       positionButtons();
     }
-  }, [buttonsVisible]);
+  }, [buttonsVisible, lehighBackArrowVisible]);
 
 
   const handleNextClick = () => {
@@ -275,20 +294,51 @@ function App() {
 
   // Lehigh Logic
   const handleLehighEnter = () => {
-    setLehighHovering(true);
-    if (lehighVideoHoverRef.current) {
-      if (lehighVideoHoverRef.current.currentTime > LEHIGH_PAUSE_TIME + 0.1) {
-        lehighVideoHoverRef.current.currentTime = 0;
-      }
-      lehighVideoHoverRef.current.style.opacity = '1';
-      lehighVideoHoverRef.current.play();
+    if (lehighImageRef.current) {
+      lehighImageRef.current.style.opacity = '1';
     }
   };
   const handleLehighLeave = () => {
-    setLehighHovering(false);
-    if (lehighVideoHoverRef.current) {
-      lehighVideoHoverRef.current.play(); // Resume
+    if (lehighImageRef.current) {
+      lehighImageRef.current.style.opacity = '0';
     }
+  };
+
+  const handleLehighClick = () => {
+    handleLehighLeave();
+    setButtonsVisible(false);
+    if (lehighClickVideoRef.current) {
+      lehighClickVideoRef.current.style.opacity = '1';
+      lehighClickVideoRef.current.play();
+    }
+  };
+
+  const handleLehighClickEnded = () => {
+    setLehighBackArrowVisible(true);
+  };
+
+  const handleLehighBackClick = () => {
+    setLehighBackArrowVisible(false);
+    const vid = lehighClickVideoRef.current;
+    if (!vid) return;
+
+    // Manual Reverse Playback
+    vid.pause();
+    const framerate = 30;
+    const intervalTime = 1000 / framerate;
+    const decrement = 1 / framerate; // reverse normal speed
+
+    const interval = setInterval(() => {
+      if (vid.currentTime <= 0) {
+        clearInterval(interval);
+        vid.pause();
+        vid.currentTime = 0;
+        vid.style.opacity = '0';
+        setButtonsVisible(true);
+      } else {
+        vid.currentTime = Math.max(0, vid.currentTime - decrement);
+      }
+    }, intervalTime);
   };
 
   // Drone Logic
@@ -309,23 +359,7 @@ function App() {
     }
   }
 
-  // Lehigh Time Update
-  const handleLehighTimeUpdate = () => {
-    const vid = lehighVideoHoverRef.current;
-    if (lehighHovering && vid && !vid.paused && vid.currentTime >= LEHIGH_PAUSE_TIME) {
-      vid.pause();
-      if (vid.currentTime > LEHIGH_PAUSE_TIME + 0.1) {
-        vid.currentTime = LEHIGH_PAUSE_TIME;
-      }
-    }
-  };
 
-  const handleLehighEnded = () => {
-    if (lehighVideoHoverRef.current) {
-      lehighVideoHoverRef.current.style.opacity = '0';
-      lehighVideoHoverRef.current.currentTime = 0;
-    }
-  }
 
   if (isMobile) {
     return (
@@ -401,17 +435,24 @@ function App() {
           </video>
 
           <video
-            id="lehighVideoHover"
+            id="lehighClickVideo"
             muted
             playsInline
             style={{ opacity: 0 }}
-            ref={lehighVideoHoverRef}
-            onTimeUpdate={handleLehighTimeUpdate}
-            onEnded={handleLehighEnded}
+            ref={lehighClickVideoRef}
+            onEnded={handleLehighClickEnded}
           >
-            <source src={videoSources.lehigh || VIDEO_PATHS.lehigh} type="video/mp4" />
+            <source src={videoSources.lehighClick || VIDEO_PATHS.lehighClick} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
+
+          <img
+            id="lehighVideoHover"
+            src="videos/lehigh-hover.png"
+            alt="Lehigh Hover"
+            style={{ opacity: 0 }}
+            ref={lehighImageRef}
+          />
 
           <button
             id="githubButton"
@@ -484,6 +525,7 @@ function App() {
             style={{ display: buttonsVisible ? 'block' : 'none' }}
             onMouseEnter={handleLehighEnter}
             onMouseLeave={handleLehighLeave}
+            onClick={handleLehighClick}
           >
             Button 6 - lehigh
           </button>
@@ -499,6 +541,17 @@ function App() {
 
           <div className={`redirect-overlay ${linkedinRedirecting ? 'visible' : ''}`}>
             REDIRECTING...
+          </div>
+
+          <LehighCourses visible={lehighBackArrowVisible} containerRef={lehighCoursesRef} />
+
+          <div
+            className={`back-arrow ${lehighBackArrowVisible ? 'visible' : ''}`}
+            onClick={handleLehighBackClick}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z" />
+            </svg>
           </div>
         </div>
 
