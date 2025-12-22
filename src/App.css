@@ -1,1 +1,20 @@
-/* Cleared for migration */
+.redirect-overlay {
+  position: absolute;
+  top: 24%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-family: 'Lato', sans-serif;
+  font-size: 2em;
+  letter-spacing: 0.2em;
+  font-weight: 300;
+  pointer-events: none;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 1s ease;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.redirect-overlay.visible {
+  opacity: 1;
+}

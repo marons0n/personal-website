@@ -86,6 +86,7 @@ html {
 #droneVideo,
 #gitVideoHover,
 #linkedinVideoHover,
+#linkedinClickVideo,
 #lehighVideoHover {
   position: absolute;
   top: 0;
@@ -115,12 +116,15 @@ html {
 }
 
 #githubButton,
+#githubButton2,
 #droneButton,
 #linkedinButton,
 #booksButton,
 #laptopButton,
-#lehighButton {
-  background-color: rgba(255, 0, 0, 0.5);
+#lehighButton,
+#blenderButton {
+  /* background-color: rgba(255, 0, 0, 0.5);
+  border: 1px solid red; */
   background-color: transparent;
   border: none;
 }

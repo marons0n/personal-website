@@ -15,32 +15,38 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [videoSources, setVideoSources] = useState<Record<string, string>>({});
+  const [linkedinRedirecting, setLinkedinRedirecting] = useState(false);
 
   // Video Refs
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
   const droneVideoRef = useRef<HTMLVideoElement>(null);
   const gitVideoHoverRef = useRef<HTMLVideoElement>(null);
   const linkedinVideoHoverRef = useRef<HTMLVideoElement>(null);
+  const linkedinClickVideoRef = useRef<HTMLVideoElement>(null);
   const lehighVideoHoverRef = useRef<HTMLVideoElement>(null);
   const backgroundVideo2Ref = useRef<HTMLVideoElement>(null);
+  const githubLeaveTimeoutRef = useRef<number | null>(null);
 
   // Button Refs
   const githubButtonRef = useRef<HTMLButtonElement>(null);
+  const githubButtonRef2 = useRef<HTMLButtonElement>(null);
   const droneButtonRef = useRef<HTMLButtonElement>(null);
   const linkedinButtonRef = useRef<HTMLButtonElement>(null);
-  const booksButtonRef = useRef<HTMLButtonElement>(null);
+  const ytButtonRef = useRef<HTMLButtonElement>(null);
   const laptopButtonRef = useRef<HTMLButtonElement>(null);
   const lehighButtonRef = useRef<HTMLButtonElement>(null);
+  const blenderButtonRef = useRef<HTMLButtonElement>(null);
 
   // Constants
   const LEHIGH_PAUSE_TIME = 39 / 24; // ~1.625s
 
   const VIDEO_PATHS = {
-    main: "videos/main0000-0120.mp4",
+    main: "videos/main.mp4",
     drone: "drone.mp4",
-    git: "videos/git_hover0120-0140.mp4",
-    linkedin: "videos/linkedin_hover0120-0130.mp4",
-    lehigh: "videos/lehigh_hover0120-0190.mp4"
+    git: "videos/git-hover.mp4",
+    linkedin: "videos/linkedin-hover.mp4",
+    linkedinClick: "videos/linkedin-click.mp4",
+    lehigh: "videos/lehigh-hover-old.mp4"
   };
 
   const positionButtons = () => {
@@ -70,12 +76,16 @@ function App() {
     const videoScaling = { scale, offsetX, offsetY };
 
     const buttonConfigs = [
+      //need 2 for unique shape
       { ref: githubButtonRef, x: 0.535, y: 0.475, width: 0.105, height: 0.12 },
-      { ref: droneButtonRef, x: 0.32, y: 0.15, width: 0.17, height: 0.12 },
+      { ref: githubButtonRef2, x: 0.545, y: 0.595, width: 0.04, height: 0.125 },
+
+      { ref: droneButtonRef, x: 0.4, y: 0.15, width: 0.2, height: 0.12 },
       { ref: linkedinButtonRef, x: 0.4, y: 0.56, width: 0.075, height: 0.16 },
-      { ref: booksButtonRef, x: 0.34, y: 0.56, width: 0.055, height: 0.2 },
+      { ref: ytButtonRef, x: 0.29, y: 0.63, width: 0.08, height: 0.11 },
       { ref: laptopButtonRef, x: 0.59, y: 0.61, width: 0.1, height: 0.17 },
-      { ref: lehighButtonRef, x: 0.66, y: 0.14, width: 0.11, height: 0.47 }
+      { ref: lehighButtonRef, x: 0.66, y: 0.14, width: 0.11, height: 0.47 },
+      { ref: blenderButtonRef, x: 0.475, y: 0.605, width: 0.07, height: 0.115 }
     ];
 
     buttonConfigs.forEach(config => {
@@ -199,17 +209,23 @@ function App() {
 
   // Hover Handlers
   const handleGithubEnter = () => {
+    if (githubLeaveTimeoutRef.current) {
+      clearTimeout(githubLeaveTimeoutRef.current);
+      githubLeaveTimeoutRef.current = null;
+    }
     if (gitVideoHoverRef.current) {
       gitVideoHoverRef.current.style.opacity = '1';
       gitVideoHoverRef.current.play();
     }
   };
   const handleGithubLeave = () => {
-    if (gitVideoHoverRef.current) {
-      gitVideoHoverRef.current.style.opacity = '0';
-      gitVideoHoverRef.current.pause();
-      gitVideoHoverRef.current.currentTime = 0;
-    }
+    githubLeaveTimeoutRef.current = setTimeout(() => {
+      if (gitVideoHoverRef.current) {
+        gitVideoHoverRef.current.style.opacity = '0';
+        gitVideoHoverRef.current.pause();
+        gitVideoHoverRef.current.currentTime = 0;
+      }
+    }, 150);
   };
 
   const handleGithubClick = () => {
@@ -233,7 +249,27 @@ function App() {
   };
   const handleLinkedinClick = () => {
     handleLinkedinLeave();
-    window.location.href = 'https://www.linkedin.com/in/maronson1/';
+    setButtonsVisible(false);
+    if (linkedinClickVideoRef.current) {
+      linkedinClickVideoRef.current.style.opacity = '1';
+      linkedinClickVideoRef.current.play();
+    }
+  };
+
+  const handleLinkedinClickEnded = () => {
+    setLinkedinRedirecting(true);
+    setTimeout(() => {
+      window.open('https://www.linkedin.com/in/maronson1/', '_blank');
+
+      // Reset
+      setLinkedinRedirecting(false);
+      if (linkedinClickVideoRef.current) {
+        linkedinClickVideoRef.current.style.opacity = '0';
+        linkedinClickVideoRef.current.pause();
+        linkedinClickVideoRef.current.currentTime = 0;
+      }
+      setButtonsVisible(true);
+    }, 3000);
   };
 
 
@@ -353,6 +389,18 @@ function App() {
           </video>
 
           <video
+            id="linkedinClickVideo"
+            muted
+            playsInline
+            style={{ opacity: 0 }}
+            ref={linkedinClickVideoRef}
+            onEnded={handleLinkedinClickEnded}
+          >
+            <source src={videoSources.linkedinClick || VIDEO_PATHS.linkedinClick} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          <video
             id="lehighVideoHover"
             muted
             playsInline
@@ -369,6 +417,18 @@ function App() {
             id="githubButton"
             className="video-button"
             ref={githubButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onMouseEnter={handleGithubEnter}
+            onMouseLeave={handleGithubLeave}
+            onClick={handleGithubClick}
+          >
+            Button 1 - github
+          </button>
+
+          <button
+            id="githubButton2"
+            className="video-button"
+            ref={githubButtonRef2}
             style={{ display: buttonsVisible ? 'block' : 'none' }}
             onMouseEnter={handleGithubEnter}
             onMouseLeave={handleGithubLeave}
@@ -402,9 +462,8 @@ function App() {
           <button
             id="booksButton"
             className="video-button"
-            ref={booksButtonRef}
+            ref={ytButtonRef}
             style={{ display: buttonsVisible ? 'block' : 'none' }}
-          // onClick={() => window.location.href = 'books.html'}
           >
             Button 4 - books
           </button>
@@ -414,7 +473,6 @@ function App() {
             className="video-button"
             ref={laptopButtonRef}
             style={{ display: buttonsVisible ? 'block' : 'none' }}
-          // onClick={() => window.location.href = 'laptop.html'}
           >
             Button 5 - laptop
           </button>
@@ -426,10 +484,22 @@ function App() {
             style={{ display: buttonsVisible ? 'block' : 'none' }}
             onMouseEnter={handleLehighEnter}
             onMouseLeave={handleLehighLeave}
-          // onClick={() => window.location.href = 'lehigh.html'}
           >
             Button 6 - lehigh
           </button>
+
+          <button
+            id="blenderButton"
+            className="video-button"
+            ref={blenderButtonRef}
+            style={{ display: buttonsVisible ? 'block' : 'none' }}
+          >
+            Button 7 - blender
+          </button>
+
+          <div className={`redirect-overlay ${linkedinRedirecting ? 'visible' : ''}`}>
+            REDIRECTING...
+          </div>
         </div>
 
         {/* Screen 3 */}
