@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import LehighCourses from './components/LehighCourses';
+import NotesWindow from './components/NotesWindow';
 
 function App() {
   const [screen1Visible, setScreen1Visible] = useState(true);
@@ -18,6 +19,8 @@ function App() {
   const [videoSources, setVideoSources] = useState<Record<string, string>>({});
   const [linkedinRedirecting, setLinkedinRedirecting] = useState(false);
   const [lehighBackArrowVisible, setLehighBackArrowVisible] = useState(false);
+  const [logoVisible, setLogoVisible] = useState(true);
+  const [notesVisible, setNotesVisible] = useState(false);
 
   // Video Refs
   const backgroundVideoRef = useRef<HTMLVideoElement>(null);
@@ -26,6 +29,8 @@ function App() {
   const linkedinVideoHoverRef = useRef<HTMLVideoElement>(null);
   const linkedinClickVideoRef = useRef<HTMLVideoElement>(null);
   const lehighClickVideoRef = useRef<HTMLVideoElement>(null);
+  const blenderVideoHoverRef = useRef<HTMLVideoElement>(null);
+  const blenderClickVideoRef = useRef<HTMLVideoElement>(null);
   const lehighImageRef = useRef<HTMLImageElement>(null);
   const backgroundVideo2Ref = useRef<HTMLVideoElement>(null);
   const githubLeaveTimeoutRef = useRef<number | null>(null);
@@ -51,7 +56,9 @@ function App() {
     git: "videos/git-hover.mp4",
     linkedin: "videos/linkedin-hover.mp4",
     linkedinClick: "videos/linkedin-click.mp4",
-    lehighClick: "videos/lehigh-click.mp4"
+    lehighClick: "videos/lehigh-click.mp4",
+    blender: "videos/blender-hover.mp4",
+    blenderClick: "videos/blender-click.mp4"
   };
 
   const positionButtons = () => {
@@ -291,6 +298,66 @@ function App() {
     }, 3000);
   };
 
+  const handleBlenderEnter = () => {
+    if (blenderVideoHoverRef.current) {
+      blenderVideoHoverRef.current.style.opacity = '1';
+      blenderVideoHoverRef.current.play();
+    }
+  };
+
+  const handleBlenderLeave = () => {
+    if (blenderVideoHoverRef.current) {
+      blenderVideoHoverRef.current.style.opacity = '0';
+      blenderVideoHoverRef.current.pause();
+      blenderVideoHoverRef.current.currentTime = 0;
+    }
+  };
+
+  const handleBlenderClick = () => {
+    handleBlenderLeave();
+    setButtonsVisible(false);
+    setLogoVisible(false);
+    if (blenderClickVideoRef.current) {
+      blenderClickVideoRef.current.style.opacity = '1';
+      blenderClickVideoRef.current.play();
+    }
+  };
+
+  const handleBlenderClickEnded = () => {
+    // Freeze on last frame
+    if (blenderClickVideoRef.current) {
+      blenderClickVideoRef.current.pause();
+    }
+    // Open Notes Window
+    setNotesVisible(true);
+  };
+
+  const handleNotesClose = () => {
+    setNotesVisible(false);
+
+    // Reverse Playback Logic
+    const vid = blenderClickVideoRef.current;
+    if (!vid) return;
+
+    vid.pause();
+    const framerate = 30;
+    const intervalTime = 1000 / framerate;
+    const decrement = 1 / framerate; // reverse normal speed
+
+    const interval = setInterval(() => {
+      if (vid.currentTime <= 0) {
+        clearInterval(interval);
+        vid.pause();
+        vid.currentTime = 0;
+        vid.style.opacity = '0';
+        setButtonsVisible(true);
+        setLogoVisible(true);
+      } else {
+        vid.currentTime = Math.max(0, vid.currentTime - decrement);
+      }
+    }, intervalTime);
+  };
+
 
   // Lehigh Logic
   const handleLehighEnter = () => {
@@ -382,7 +449,7 @@ function App() {
   return (
     <>
       <div style={{ display: isMobile ? 'none' : 'block' }}>
-        <img id="logo" src="logo.png" alt="Logo" />
+        <img id="logo" src="logo.png" alt="Logo" style={{ opacity: logoVisible ? 1 : 0, pointerEvents: logoVisible ? 'auto' : 'none' }} />
 
         {/* Screen 1 */}
         <div id="screen1" className={`screen ${!screen1Visible ? 'hidden' : ''}`}>
@@ -419,6 +486,23 @@ function App() {
 
           <video id="linkedinVideoHover" muted playsInline style={{ opacity: 0 }} ref={linkedinVideoHoverRef}>
             <source src={videoSources.linkedin || VIDEO_PATHS.linkedin} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          <video id="blenderVideoHover" muted playsInline style={{ opacity: 0 }} ref={blenderVideoHoverRef}>
+            <source src={videoSources.blender || VIDEO_PATHS.blender} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+
+          <video
+            id="blenderClickVideo"
+            muted
+            playsInline
+            style={{ opacity: 0 }}
+            ref={blenderClickVideoRef}
+            onEnded={handleBlenderClickEnded}
+          >
+            <source src={videoSources.blenderClick || VIDEO_PATHS.blenderClick} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
 
@@ -535,6 +619,9 @@ function App() {
             className="video-button"
             ref={blenderButtonRef}
             style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onMouseEnter={handleBlenderEnter}
+            onMouseLeave={handleBlenderLeave}
+            onClick={handleBlenderClick}
           >
             Button 7 - blender
           </button>
@@ -553,6 +640,13 @@ function App() {
               <path d="M7.828 11H20v2H7.828l5.364 5.364-1.414 1.414L4 12l7.778-7.778 1.414 1.414z" />
             </svg>
           </div>
+
+          <NotesWindow
+            visible={notesVisible}
+            startX={0.51} // Approx center x of where blender button is
+            startY={0.65} // Approx center y of where blender button is
+            onClose={handleNotesClose}
+          />
         </div>
 
         {/* Screen 3 */}
