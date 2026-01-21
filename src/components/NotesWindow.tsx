@@ -20,14 +20,17 @@ const NotesWindow: React.FC<NotesWindowProps> = ({ visible, startX, startY, onCl
 
     // Typing effect
     useEffect(() => {
+        let interval: any;
+        let startDelay: any;
+
         if (visible) {
             setDisplayedText("");
             setTypingComplete(false);
             let index = 0;
 
             // Delay typing until animation is mostly done (e.g. 500ms)
-            const startDelay = setTimeout(() => {
-                const interval = setInterval(() => {
+            startDelay = setTimeout(() => {
+                interval = setInterval(() => {
                     if (index < FULL_TEXT.length) {
                         setDisplayedText((prev) => prev + FULL_TEXT.charAt(index));
                         index++;
@@ -36,15 +39,16 @@ const NotesWindow: React.FC<NotesWindowProps> = ({ visible, startX, startY, onCl
                         setTypingComplete(true);
                     }
                 }, 30); // Typing speed
-
-                return () => clearInterval(interval);
             }, 600);
-
-            return () => clearTimeout(startDelay);
         } else {
             setDisplayedText("");
             setTypingComplete(false);
         }
+
+        return () => {
+            clearTimeout(startDelay);
+            if (interval) clearInterval(interval);
+        };
     }, [visible]);
 
     // CSS variables for dynamic start position
