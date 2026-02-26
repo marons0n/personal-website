@@ -32,7 +32,8 @@ const NotesWindow: React.FC<NotesWindowProps> = ({ visible, startX, startY, onCl
             startDelay = setTimeout(() => {
                 interval = setInterval(() => {
                     if (index < FULL_TEXT.length) {
-                        setDisplayedText((prev) => prev + FULL_TEXT.charAt(index));
+                        const currentText = FULL_TEXT.slice(0, index + 1);
+                        setDisplayedText(currentText);
                         index++;
                     } else {
                         clearInterval(interval);
