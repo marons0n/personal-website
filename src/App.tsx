@@ -408,6 +408,10 @@ function App() {
     }, intervalTime);
   };
 
+  const handleYtClick = () => {
+    window.open('https://www.youtube.com/@mattaronson333', '_blank');
+  };
+
   // Drone Logic
   const handleDroneClick = () => {
     // Hide buttons
@@ -589,6 +593,7 @@ function App() {
             className="video-button"
             ref={ytButtonRef}
             style={{ display: buttonsVisible ? 'block' : 'none' }}
+            onClick={handleYtClick}
           >
             Button 4 - books
           </button>
