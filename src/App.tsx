@@ -570,7 +570,10 @@ function App() {
             id="droneButton"
             className="video-button"
             ref={droneButtonRef}
-            style={{ display: buttonsVisible ? 'block' : 'none' }}
+            style={{ 
+              display: buttonsVisible ? 'block' : 'none',
+              pointerEvents: 'none' 
+            }}
             onClick={handleDroneClick}
           >
             Button 2 - drone
