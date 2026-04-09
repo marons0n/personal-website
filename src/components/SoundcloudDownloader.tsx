@@ -80,7 +80,7 @@ const SoundcloudDownloader: React.FC = () => {
                     const totalBytes = contentLength ? parseInt(contentLength, 10) : 0;
 
                     let loadedBytes = 0;
-                    const chunks: Uint8Array[] = [];
+                    const chunks: Uint8Array<ArrayBuffer>[] = [];
                     const reader = streamResponse.body.getReader();
 
                     while (true) {
@@ -100,7 +100,7 @@ const SoundcloudDownloader: React.FC = () => {
                         }
                     }
 
-                    const blob = new Blob(chunks as unknown as BlobPart[], { type: 'audio/mpeg' });
+                    const blob = new Blob(chunks, { type: 'audio/mpeg' });
                     triggerBrowserDownload(blob, filename);
                 } catch (trackError: unknown) {
                     console.error(`Error downloading track ${trackNum}:`, trackError);

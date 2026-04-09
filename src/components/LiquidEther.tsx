@@ -535,7 +535,7 @@ export default function LiquidEther({
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      update(..._args: any[]) {
+      update(..._args: any[]): any {
         Common.renderer!.setRenderTarget(this.props.output || null);
         Common.renderer!.render(this.scene!, this.camera!);
         Common.renderer!.setRenderTarget(null);
