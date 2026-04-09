@@ -1,0 +1,8 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  # PostHog keys are intentionally public (frontend analytics)
+  SECRETS_SCAN_OMIT_KEYS = "VITE_POSTHOG_KEY,VITE_POSTHOG_HOST"
