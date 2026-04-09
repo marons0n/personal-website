@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ─── Page Shell ────────────────────────────────────────────── */
+.cb-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    background: #0a0612;
+}
+
+/* ─── Full-Screen Fluid Background ─────────────────────────── */
+.cb-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+}
+
+/* ─── Card Centering Wrapper ────────────────────────────────── */
+.cb-card-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 480px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* ─── Card (no background, just layout) ─────────────────────── */
+.cb-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+.cb-card * {
+    box-sizing: border-box;
+}
+
+/* ─── Logo ──────────────────────────────────────────────────── */
+.cb-logo-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: -32px;
+    margin-bottom: 4px;
+}
+
+.cb-logo {
+    height: 88px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* ─── Subtitle ──────────────────────────────────────────────── */
+.cb-subtitle {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+    margin: 0;
+}
+
+/* ─── Divider ───────────────────────────────────────────────── */
+.cb-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    margin: 0 -8px;
+}
+
+/* ─── Input Group ───────────────────────────────────────────── */
+.cb-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cb-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 1);
+}
+
+.cb-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.cb-input-icon {
+    position: absolute;
+    left: 14px;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+}
+
+.cb-input {
+    width: 100%;
+    padding: 13px 14px 13px 42px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.0);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    user-select: text;
+}
+
+.cb-input::placeholder {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.cb-input:focus {
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.cb-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── Download Button ───────────────────────────────────────── */
+.cb-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 24px;
+    background: #5227FF;
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow:
+        0 4px 20px rgba(82, 39, 255, 0.35),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+    overflow: hidden;
+}
+
+.cb-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    border-radius: inherit;
+}
+
+.cb-btn:not(.disabled):hover {
+    transform: translateY(-1px);
+    box-shadow:
+        0 8px 30px rgba(82, 39, 255, 0.5),
+        0 1px 0 rgba(255, 255, 255, 0.15) inset;
+}
+
+.cb-btn:not(.disabled):hover::before {
+    opacity: 1;
+}
+
+.cb-btn:not(.disabled):active {
+    transform: translateY(0px);
+    box-shadow:
+        0 2px 10px rgba(82, 39, 255, 0.3),
+        0 1px 0 rgba(255, 255, 255, 0.1) inset;
+}
+
+.cb-btn.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+/* ─── Spinner ───────────────────────────────────────────────── */
+.cb-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: cb-spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes cb-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ─── Progress Section ──────────────────────────────────────── */
+.cb-progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+}
+
+.cb-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.cb-status-text {
+    font-size: 13px;
+    color: rgba(177, 158, 239, 0.9);
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cb-error-text {
+    color: #ff6b6b !important;
+}
+
+.cb-success-text {
+    color: #69f0ae !important;
+}
+
+.cb-track-badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 20px;
+    padding: 3px 9px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cb-progress-track {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+}
+
+.cb-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    border-radius: 100px;
+    transition: width 0.25s ease;
+    box-shadow: 0 0 8px rgba(82, 39, 255, 0.5);
+}
+
+.cb-progress-fill.indeterminate {
+    width: 30%;
+    animation: cb-indeterminate 1.2s infinite ease-in-out;
+}
+
+@keyframes cb-indeterminate {
+    0% {
+        transform: translateX(-110%);
+    }
+
+    100% {
+        transform: translateX(380%);
+    }
+}
+
+.cb-progress-pct {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.3);
+    text-align: right;
+    letter-spacing: 0.04em;
+}
+
+/* ─── Footer Note ───────────────────────────────────────────── */
+.cb-footer-note {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.2);
+    text-align: center;
+    margin: 0;
+    line-height: 1.5;
+}

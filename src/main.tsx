@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import SoundcloudDownloader from './components/SoundcloudDownloader.tsx'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 
@@ -13,10 +14,12 @@ posthog.init(
   }
 )
 
+const path = window.location.pathname.toLowerCase();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <PostHogProvider client={posthog}>
-      <App />
+      {path === '/soundclouddownloader' ? <SoundcloudDownloader /> : <App />}
     </PostHogProvider>
   </StrictMode>,
 )
