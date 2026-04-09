@@ -19,7 +19,7 @@ const path = window.location.pathname.toLowerCase();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <PostHogProvider client={posthog}>
-      {path === '/soundclouddownloader' ? <SoundcloudDownloader /> : <App />}
+      {path === '/cheddarbox' ? <SoundcloudDownloader /> : <App />}
     </PostHogProvider>
   </StrictMode>,
 )
