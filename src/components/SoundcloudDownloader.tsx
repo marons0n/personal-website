@@ -100,7 +100,7 @@ const SoundcloudDownloader: React.FC = () => {
                         }
                     }
 
-                    const blob = new Blob(chunks, { type: 'audio/mpeg' });
+                    const blob = new Blob(chunks as unknown as BlobPart[], { type: 'audio/mpeg' });
                     triggerBrowserDownload(blob, filename);
                 } catch (trackError: unknown) {
                     console.error(`Error downloading track ${trackNum}:`, trackError);
