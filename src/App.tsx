@@ -131,35 +131,26 @@ function App() {
   };
 
   useEffect(() => {
-    // Navigation check
-    const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
-    if (navEntry && navEntry.type === 'back_forward') {
-      setScreen1Visible(false);
-      // setVideoToEnd
-      if (backgroundVideoRef.current) {
-        const vid = backgroundVideoRef.current;
-        const setToEnd = () => { vid.currentTime = vid.duration; };
-        if (vid.readyState >= 1) setToEnd();
-        else vid.addEventListener('loadedmetadata', setToEnd, { once: true });
-      }
-      setTimeout(() => {
-        setButtonsVisible(true);
-        positionButtons();
-      }, 0);
-    }
-
     window.addEventListener('resize', positionButtons);
 
     // Mobile Check
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 700);
     };
-    // checkMobile(); // Already initialized
     window.addEventListener('resize', checkMobile);
+
+    // Reset when back/forward navigation occurs
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
 
     return () => {
       window.removeEventListener('resize', positionButtons);
       window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('pageshow', handlePageShow);
     };
   }, []);
 

@@ -10,7 +10,7 @@ interface NotesWindowProps {
 
 const FULL_TEXT = `Welcome to my site!
 
-The art on this website was created in Blender, a 3D modeling and animation software. Everything you see is 100% original, with the exception of a couple of assets licensed from other artists. I taught myself Blender about 6 years ago and use it mostly for experimentation and personal projects such as this one. If you want to see more of my work in Blender, reach out to me and I'll be happy to share.
+The art on this website was created in Blender, a 3D modeling and animation software. Everything you see is 100% original, with the exception of a couple of assets licensed from other artists. I taught myself Blender about 6 years ago and use it mostly for personal projects such as this one. If you want to see more of my work in Blender, reach out to me and I'll be happy to share.
  
  -Matt`
 
