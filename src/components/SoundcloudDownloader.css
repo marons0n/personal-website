@@ -192,6 +192,46 @@
     cursor: not-allowed;
 }
 
+/* ─── Format Selector ───────────────────────────────────────── */
+.cb-format-selector {
+    display: flex;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cb-format-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cb-format-btn:hover:not(:disabled) {
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.cb-format-btn.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.cb-format-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* ─── Spinner ───────────────────────────────────────────────── */
 .cb-spinner {
     display: inline-block;

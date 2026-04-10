@@ -10,6 +10,7 @@ const SoundcloudDownloader: React.FC = () => {
     const [statusColorClass, setStatusColorClass] = useState('');
     const [trackInfo, setTrackInfo] = useState('');
     const [progressPercent, setProgressPercent] = useState<number | null>(0);
+    const [downloadFormat, setDownloadFormat] = useState<'mp3' | 'wav'>('mp3');
 
     const hasValidUrl = url.trim().length > 0 && url.includes('soundcloud.com');
 
@@ -22,6 +23,47 @@ const SoundcloudDownloader: React.FC = () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(blobUrl);
+    };
+
+    const encodeWAV = (audioBuffer: AudioBuffer): Blob => {
+        const numberOfChannels = audioBuffer.numberOfChannels;
+        const length = audioBuffer.length * numberOfChannels * 2; // 16-bit PCM
+        const buffer = new ArrayBuffer(44 + length);
+        const view = new DataView(buffer);
+
+        const writeString = (view: DataView, offset: number, string: string) => {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        };
+
+        // RIFF header
+        writeString(view, 0, 'RIFF');
+        view.setUint32(4, 36 + length, true);
+        writeString(view, 8, 'WAVE');
+        writeString(view, 12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true); // PCM format
+        view.setUint16(22, numberOfChannels, true);
+        view.setUint32(24, audioBuffer.sampleRate, true);
+        view.setUint32(28, audioBuffer.sampleRate * 2 * numberOfChannels, true);
+        view.setUint16(32, numberOfChannels * 2, true);
+        view.setUint16(34, 16, true);
+        writeString(view, 36, 'data');
+        view.setUint32(40, length, true);
+
+        let offset = 44;
+        for (let i = 0; i < audioBuffer.length; i++) {
+            for (let channel = 0; channel < numberOfChannels; channel++) {
+                let sample = audioBuffer.getChannelData(channel)[i];
+                sample = Math.max(-1, Math.min(1, sample));
+                sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                view.setInt16(offset, sample, true);
+                offset += 2;
+            }
+        }
+
+        return new Blob([buffer], { type: 'audio/wav' });
     };
 
     const handleDownload = async () => {
@@ -66,9 +108,9 @@ const SoundcloudDownloader: React.FC = () => {
 
                 try {
                     const safeTitle = track.title.replace(/[\/\\?%*:|"<>]/g, '-');
-                    const filename = `${safeTitle}.mp3`;
+                    const filename = `${safeTitle}.${downloadFormat}`;
 
-                    const downloadUrl = `/.netlify/functions/soundcloud?action=download&url=${encodeURIComponent(track.permalink_url)}`;
+                    const downloadUrl = `/.netlify/functions/soundcloud?action=download&trackId=${track.id}&url=${encodeURIComponent(track.permalink_url)}`;
                     const streamResponse = await fetch(downloadUrl);
 
                     if (!streamResponse.ok || !streamResponse.body) {
@@ -100,8 +142,18 @@ const SoundcloudDownloader: React.FC = () => {
                         }
                     }
 
-                    const blob = new Blob(chunks, { type: 'audio/mpeg' });
-                    triggerBrowserDownload(blob, filename);
+                    if (downloadFormat === 'wav') {
+                        setStatusText(`Converting "${track.title}" to WAV...`);
+                        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                        const combinedBuffer = await new Blob(chunks).arrayBuffer();
+                        const audioBuffer = await audioCtx.decodeAudioData(combinedBuffer);
+                        const wavBlob = encodeWAV(audioBuffer);
+                        triggerBrowserDownload(wavBlob, filename);
+                        await audioCtx.close();
+                    } else {
+                        const blob = new Blob(chunks, { type: 'audio/mpeg' });
+                        triggerBrowserDownload(blob, filename);
+                    }
                 } catch (trackError: unknown) {
                     console.error(`Error downloading track ${trackNum}:`, trackError);
                 }
@@ -180,6 +232,28 @@ const SoundcloudDownloader: React.FC = () => {
                                 disabled={isLoading}
                                 className="cb-input"
                             />
+                        </div>
+                    </div>
+
+                    <div className="cb-input-group">
+                        <label className="cb-label">Output Format</label>
+                        <div className="cb-format-selector">
+                            <button
+                                type="button"
+                                className={`cb-format-btn ${downloadFormat === 'mp3' ? 'active' : ''}`}
+                                onClick={() => setDownloadFormat('mp3')}
+                                disabled={isLoading}
+                            >
+                                MP3
+                            </button>
+                            <button
+                                type="button"
+                                className={`cb-format-btn ${downloadFormat === 'wav' ? 'active' : ''}`}
+                                onClick={() => setDownloadFormat('wav')}
+                                disabled={isLoading}
+                            >
+                                WAV
+                            </button>
                         </div>
                     </div>
 
